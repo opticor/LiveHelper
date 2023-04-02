@@ -5,6 +5,7 @@ import { useNow } from './utils'
 import { LocalizationProvider } from './langs'
 import { Localized } from '@fluent/react'
 import { Loading } from './loading'
+import { getWebsitesSort } from './config'
 
 type Cache = Record<string, CacheItem>
 
@@ -91,7 +92,9 @@ const Widget: Record<string, React.ReactElement> = {
 
 const Popup: React.FC = () => {
   const [ list, setList ] = useState<Cache>({})
+  const [ order, setOrder ] = useState<string[]>([])
   const [ polling, setPolling ] = useState(false)
+
   useEffect(() => {
     const port = chrome.runtime.connect({name: 'channel'})
     port.onMessage.addListener((m) => {
@@ -100,7 +103,15 @@ const Popup: React.FC = () => {
     })
     return () => port.disconnect()
   }, [])
+
+  useEffect(()=>{
+    setOrder(getWebsitesSort())
+  },[])
+
   const keys = Object.keys(list)
+  const sortKeys = keys.sort((a,b)=>{
+    return order.indexOf(a) - order.indexOf(b)
+ })
 
   return <LocalizationProvider>
     <div className='status' data-polling={polling}>
@@ -110,8 +121,8 @@ const Popup: React.FC = () => {
       </div>
     </div>
     <div>
-      { keys.length > 0 ?
-        keys.map(k => <Site key={k} id={k} item={list[k]} />) :
+      { sortKeys.length > 0 ?
+        sortKeys.map(k => <Site key={k} id={k} item={list[k]} />) :
         <div className='go-option-tip'>
           <Localized {...Widget} id='goto-option'><></></Localized>
         </div> }

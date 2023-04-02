@@ -32,7 +32,7 @@ online =
   }
 options = 选项
 options-website-title = 网站
-  .subTitle = 在你想观看的网站前面打勾
+  .subTitle = 在你想观看的网站前面打勾（拖动排序）
 options-misc-title = 杂项
 
 misc-notification = 有新的主播开始直播时提醒我

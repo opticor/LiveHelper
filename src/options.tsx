@@ -7,8 +7,10 @@ import { getWebSites } from './types'
 import { deepmerge } from './utils'
 import * as cfg from './config'
 import { Loading } from './loading'
+import DragSort from './dragSort'
+import { WebSite } from './types'
 
-const websites = getWebSites()
+const websites:WebSite[] = getWebSites()
 const ConfigCtx = createContext<{
   config: cfg.Config
   setConfig: (c: cfg.Config) => void
@@ -90,13 +92,42 @@ const OptionSectionTitle: React.FC<{
 }
 
 const WebsiteSection: React.FC = () => {
+  const [list, setList] = useState<WebSite[]>([])
+  const [moveItem, setMoveItem] = useState<number>(-1)
+
+  const handleDragMove = (data:WebSite[], from:number, to:number) => {
+    setMoveItem(to)
+    setList(data)
+  }
+
+  const handleDragEnd = ()=>{
+    setMoveItem(-1)
+    cfg.setWebsitesSort(list.map(item => item.id))
+  }
+
+  useEffect(() => {
+    const order = cfg.getWebsitesSort()
+    if(order && order.length > 0) {
+      const newList = websites.sort((a,b)=>{
+        return order.indexOf(a.id) - order.indexOf(b.id)
+     })
+      setList(newList)
+    }else{
+      setList(websites)
+    }
+  }, [])
+
   return <section>
     <Localized id='options-website-title' attrs={{subTitle: true}}>
       <OptionSectionTitle />
     </Localized>
-    { websites.map(({ id }) => <div>
-      <SiteEnabled id={id} />
-    </div>) }
+    <DragSort onDragEnd={handleDragEnd} onChange={handleDragMove} data={list} >
+        { list.map( (item:any, index:number) =>{
+          return <div className={moveItem === index? 'item active' : 'item'} key={item.name}>
+            <SiteEnabled id={item.id} />
+          </div>
+        }) }
+    </DragSort>
   </section>
 }
 

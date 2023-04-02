@@ -70,6 +70,14 @@ export function getLastPoll(): Record<string, Living> {
   return parseJSON(localStorage.getItem(LastPollKey)) || {}
 }
 
+export function setWebsitesSort(value: string[]) {
+  localStorage.setItem('sort', JSON.stringify(value))
+}
+
+export function getWebsitesSort(): string[] {
+  return parseJSON(localStorage.getItem('sort')) || Websites.map(i => i.id)
+}
+
 export function setPollLastPoll(value: number) {
   localStorage.setItem(PollLastPollKey, JSON.stringify(value))
 }

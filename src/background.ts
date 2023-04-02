@@ -90,7 +90,7 @@ async function poll(from: From) {
           living: living.sort(orderBy),
           error,
         })
-      } catch (e) {
+      } catch (e: any) {
         if (e instanceof PollError) {
           error = {
             type: e.type,
