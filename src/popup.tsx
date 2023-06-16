@@ -6,6 +6,7 @@ import { LocalizationProvider } from './langs'
 import { Localized } from '@fluent/react'
 import { Loading } from './loading'
 import { getWebsitesSort } from './config'
+import { AiFillCaretDown,AiFillCaretRight } from 'react-icons/ai';
 
 type Cache = Record<string, CacheItem>
 
@@ -65,32 +66,52 @@ const ShowError: React.FC<{ err: CacheError }> = ({ err: {type, message} }) => {
 }
 
 const Site: React.FC<{
-  id: string
-  item: CacheItem
+  id: string;
+  item: CacheItem;
 }> = ({ id, item }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
   const handleClick = useCallback(() => {
     chrome.windows.create({
       url: item.info.homepage,
       type: 'normal',
-    })
-    // window.open(item.info.homepage)
-  }, [ item ])
-  return <div className='site'>
-    <div className="site-header">
-      <div className="site-name" onClick={handleClick}>
-        <img className="site-icon" alt={id} src={`/icon/websites/${id}.svg`} />
-        <Localized id={`site-${id}`}>{id}</Localized>
+    });
+  }, [item]);
+
+  const handleToggleExpand = useCallback(() => {
+    setIsExpanded((prevExpanded) => !prevExpanded);
+  }, []);
+
+  return (
+    <div className="site">
+      <div className="site-header">
+        <div className="site-name" onClick={handleClick}>
+          <img className="site-icon" alt={id} src={`/icon/websites/${id}.svg`} />
+          <Localized id={`site-${id}`}>{id}</Localized>
+        </div>
+        <button className='site-toggle-button' onClick={handleToggleExpand}>
+          {isExpanded ? <AiFillCaretDown/> : <AiFillCaretRight/>}
+        </button>
       </div>
+      {/* {isExpanded ? ( */}
+      <div hidden={!isExpanded}>
+        {!item.error ? (
+          item.living.length === 0 ? (
+            <span className="info">
+              <Localized id="no-room" />
+            </span>
+          ) : (
+            item.living.map((i, id) => <Item key={id} room={i} />)
+          )
+        ) : (
+          <ShowError err={item.error} />
+        )}
+      </div>
+      {/* ) : null} */}
     </div>
-    {
-      !item.error ?
-        item.living.length === 0 ?
-          <span className='info'><Localized id='no-room' /></span> :
-          item.living.map((i, id) => <Item key={id} room={i} />) :
-        <ShowError err={item.error}/>
-    }
-  </div>
-}
+  );
+};
+
 
 const GoOption: React.FC = ({ children }) => <a href='options.html'>{children}</a>
 const Widget: Record<string, React.ReactElement> = {

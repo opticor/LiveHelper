@@ -25,6 +25,7 @@ body {
 }
 .site {
   background-color: #ffffff;
+  
   .site-header {
     z-index: 1;
     background: white;
@@ -34,7 +35,10 @@ body {
     border-left: 0;
     border-right: 0;
     margin-bottom: 2px;
-
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
     .site-name {
       cursor: pointer;
       max-width: fit-content;
@@ -46,13 +50,25 @@ body {
       padding: 0px 5px 0px 5px;
       vertical-align: text-bottom;
     }
-  }
-  .error , .info {
-    margin: 5px 0;
-    display: block;
-    text-align: center;
+    
+    .site-toggle-button {
+      margin-left: 10px;
+      background-color: #f0f0f0;
+      color: #333333;
+      border: 1px solid #ccc;
+      padding: 1px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: none;
+      &::hover {
+        background-color: #e5e5e5;
+        border-color: #999;
+      }
+    }
   }
 }
+
+
 .room {
   margin-top: 0;
   /*width: 400px;*/
@@ -128,7 +144,7 @@ body {
 .status {
   position: fixed;
   top: 0;
-  right: 0;
+  right: 50%;
   z-index: 10;
   padding-top: 5px;
 
