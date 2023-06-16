@@ -61,7 +61,6 @@ export class LocalMap<V> {
     }
     this.id = setTimeout(() => {
       chrome.storage.local.set({ [this.name]: this.mem })
-      // window.localStorage.setItem(this.name, JSON.stringify(this.mem))
     }, 0)
   }
   toJSON () {
