@@ -34,7 +34,11 @@ export class LocalMap<V> {
   private mem: Record<string, V>
   private id: ReturnType<typeof setTimeout> | undefined
   constructor(private name: string) {
-    this.mem = parseJSON(window.localStorage.getItem(name)) || {}
+    // this.mem = parseJSON(window.localStorage.getItem(name)) || {}
+    this.mem = {}
+    chrome.storage.local.get(name, (items) => {
+      this.mem = items[name] || {}
+    })
   }
   set(k: string, v: V) {
     this.mem[k] = v
@@ -56,7 +60,8 @@ export class LocalMap<V> {
       this.id = undefined
     }
     this.id = setTimeout(() => {
-      window.localStorage.setItem(this.name, JSON.stringify(this.mem))
+      chrome.storage.local.set({ [this.name]: this.mem })
+      // window.localStorage.setItem(this.name, JSON.stringify(this.mem))
     }, 0)
   }
   toJSON () {

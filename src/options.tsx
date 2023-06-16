@@ -106,15 +106,16 @@ const WebsiteSection: React.FC = () => {
   }
 
   useEffect(() => {
-    const order = cfg.getWebsitesSort()
-    if(order && order.length > 0) {
-      const newList = websites.sort((a,b)=>{
-        return order.indexOf(a.id) - order.indexOf(b.id)
-     })
-      setList(newList)
-    }else{
-      setList(websites)
-    }
+    cfg.getWebsitesSort().then((order)=>{
+      if(order && order.length > 0) {
+        const newList = websites.sort((a,b)=>{
+          return order.indexOf(a.id) - order.indexOf(b.id)
+       })
+        setList(newList)
+      }else{
+        setList(websites)
+      }
+    })
   }, [])
 
   return <section>

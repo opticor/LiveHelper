@@ -1,10 +1,10 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
 
   "default_locale": "zh_CN",
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "options_ui": {
     "page": "dist/options.html"
   },
@@ -13,22 +13,25 @@
     "256":"icon/icon.png"
   },
 
-  "browser_action": {
+  "action": {
     "browser_style": true,
     "default_icon": "icon/icon-64.png",
     "default_popup": "dist/popup.html"
   },
 
   "background": {
-    "scripts": ["dist/background.js"],
-    "persistent": false
+    "service_worker": "dist/background.js"
   },
 
-  "permissions": [
+  "permissions":[
     "alarms",
     "cookies",
     "notifications",
-    "storage",
+    "storage"
+  ],
+
+  "host_permissions": [
+
     "*://*.douyu.com/*",
     "*://*.zhanqi.tv/*",
     "*://*.huya.com/*",
@@ -53,6 +56,10 @@
   ],
 
   "web_accessible_resources": [
-    "icon.png"
+    {
+      "resources":["icon.png"],
+      "matches":["*://*/*"]
+    }
   ]
+
 }

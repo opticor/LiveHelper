@@ -19,7 +19,10 @@ const Item: React.FC<{ room: Living }> = ({ room: {
 } }) => {
   const now = useNow()
   const onClick = useCallback(() => {
-    window.open(url)
+    chrome.windows.create({
+      url,
+    })
+    // window.open(url)
   }, [url])
   const hasOnline = maybeHas(online)
   let timeView = <Localized id='time-started' />
@@ -66,7 +69,11 @@ const Site: React.FC<{
   item: CacheItem
 }> = ({ id, item }) => {
   const handleClick = useCallback(() => {
-    window.open(item.info.homepage)
+    chrome.windows.create({
+      url: item.info.homepage,
+      type: 'normal',
+    })
+    // window.open(item.info.homepage)
   }, [ item ])
   return <div className='site'>
     <div className="site-header">
@@ -105,7 +112,9 @@ const Popup: React.FC = () => {
   }, [])
 
   useEffect(()=>{
-    setOrder(getWebsitesSort())
+    getWebsitesSort().then((order)=> {
+      setOrder(order)
+    })
   },[])
 
   const keys = Object.keys(list)

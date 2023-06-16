@@ -20,7 +20,10 @@ chrome.runtime.onConnect.addListener(async (port) => {
 })
 
 chrome.notifications.onClicked.addListener((id) => {
-  window.open(id)
+  chrome.windows.create({
+    url: id,
+  })
+  // window.open(id)
 })
 
 chrome.alarms.create({
@@ -29,7 +32,7 @@ chrome.alarms.create({
 })
 chrome.alarms.onAlarm.addListener(async () => {
   const interval = await config.getInterval() * 60
-  if (now() - config.getPollLastPoll() < interval) {
+  if (now() - await config.getPollLastPoll() < interval) {
     return
   }
   poll(From.Timer)
@@ -66,7 +69,7 @@ function endLive(item: Living) {
 }
 
 async function poll(from: From) {
-  if ((now() - config.getPollLastPoll() <= 10) && (!config.getDirty())) {
+  if ((now() - await config.getPollLastPoll() <= 10) && (! await config.getDirty())) {
     return
   }
   const startTime = +new Date()
@@ -112,7 +115,7 @@ async function poll(from: From) {
       syncAll()
     }))
     const living = dictByUrl(all)
-    const lastLiving = config.getLastPoll()
+    const lastLiving = await config.getLastPoll()
     for (const [key, value] of Object.entries(living)) {
       if (!lastLiving[key]) {
         beginLive(value)

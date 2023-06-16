@@ -20,25 +20,34 @@ export interface Config {
 }
 export type Preference = Required<Required<Config>['preference']>
 
-function getArea () {
-  const UseSync = parseJSON(localStorage.getItem(UseSyncKey), false)
-  const area: chrome.storage.StorageArea = UseSync ? chrome.storage.sync : chrome.storage.local
-  return area
+function getArea () : Promise<chrome.storage.StorageArea> {
+  // const UseSync = parseJSON(localStorage.getItem(UseSyncKey), false)
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(UseSyncKey, (items: { [key: string]: any }) => {
+      const UseSync = items[UseSyncKey];
+      const area: chrome.storage.StorageArea = UseSync ? chrome.storage.sync : chrome.storage.local;
+      resolve(area);
+    });
+  });
 }
 
 async function get<T> (key: string): Promise<T | undefined> {
   return new Promise((res, rej) => {
-    getArea().get(key, (items) => {
-      res(items[key])
-    })
+    getArea().then((area) => {
+      area.get(key, (items) => {
+        res(items[key])
+      })
+    });
   })
 }
 
 async function set(key: string, value: unknown): Promise<void> {
   return new Promise((res, rej) => {
-    getArea().set({
-      [key]: value
-    }, res)
+    getArea().then((area) => {
+      area.set({
+        [key]: value
+      }, res)
+    });
   })
 }
 
@@ -50,7 +59,7 @@ export async function getConfig () {
   return await get<Config>(ConfigKey) || {
     preference: {
       interval: 5,
-      notification: true,
+      notification: false,
       preview: true,
       ignoreFirstNotify: true
     }
@@ -63,38 +72,58 @@ export async function getEnabledWebsites () {
 }
 
 export function setLastPoll(value: Record<string, Living>) {
-  localStorage.setItem(LastPollKey, JSON.stringify(value))
+  chrome.storage.local.set({ [LastPollKey]: JSON.stringify(value) })
 }
 
-export function getLastPoll(): Record<string, Living> {
-  return parseJSON(localStorage.getItem(LastPollKey)) || {}
+export function getLastPoll(): Promise<Record<string, Living>> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(LastPollKey, (items: { [key: string]: Living }) => {
+      const lastPoll = items[LastPollKey] || {};
+      resolve(parseJSON(lastPoll) || {});
+    });
+  });
 }
 
 export function setWebsitesSort(value: string[]) {
-  localStorage.setItem('sort', JSON.stringify(value))
+  chrome.storage.local.set({ 'sort': JSON.stringify(value) });
 }
 
-export function getWebsitesSort(): string[] {
-  return parseJSON(localStorage.getItem('sort')) || Websites.map(i => i.id)
+export function getWebsitesSort(): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get('sort', (items: { [key: string]: string }) => {
+      const sort = parseJSON(items['sort']) || Websites.map(i => i.id);
+      resolve(sort);
+    });
+  });
 }
 
 export function setPollLastPoll(value: number) {
-  localStorage.setItem(PollLastPollKey, JSON.stringify(value))
+  chrome.storage.local.set({ [PollLastPollKey]: JSON.stringify(value) });
 }
 
-export function getPollLastPoll(): number {
-  return parseJSON(localStorage.getItem(PollLastPollKey)) || 0
+export function getPollLastPoll(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(PollLastPollKey, (items: { [key: string]: number }) => {
+      const pollLastPoll = parseJSON(items[PollLastPollKey]) || 0;
+      resolve(pollLastPoll);
+    });
+  });
 }
 
 export function setDirty() {
-  localStorage.setItem(DirtyKey, 'true')
+  chrome.storage.local.set({ [DirtyKey]: 'true' });
 }
 
-export function getDirty() {
-  const ret = localStorage.getItem(DirtyKey) === 'true'
-  localStorage.removeItem(DirtyKey)
-  return ret
+export function getDirty(): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(DirtyKey, (items: { [key: string]: string }) => {
+      const dirty = items[DirtyKey] === 'true';
+      chrome.storage.local.remove(DirtyKey);
+      resolve(dirty);
+    });
+  });
 }
+
 
 export async function getInterval() {
   const cfg = await getConfig()

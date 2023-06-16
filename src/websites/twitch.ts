@@ -2,22 +2,36 @@ import { registerWebSite, Living, PollError, PollErrorType } from '../types'
 import { mapFilter, getCookie } from '~/utils'
 
 const ClientId = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
-const GqlRequest = `[{"operationName":"FollowedIndex_CurrentUser","variables":{"limit":30},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"181e1c51a951f4cc0dc54e13d3c4dbde6d9bf4ecbd4724d753ddb1794ab055d6"}}}]`
+const GqlRequest = `[{
+  "operationName": "FollowingLive_CurrentUser",
+  "variables": {
+    "imageWidth": 50,
+    "limit": 30
+  },
+  "extensions": {
+    "persistedQuery": {
+      "version": 1,
+      "sha256Hash": "26fa7fb132379e29dc9dc5757ced2d2259ae0ab69460e2b9a7db9cff60e57cd2"
+    }
+  }
+}]`
 
 interface Room {
-  displayName: string
-  login: string
-  stream: {
-    title: string
-    viewersCount: number
-    previewImageURL: string
+  node:{
+    displayName: string
+    login: string
+    stream: {
+      title: string
+      viewersCount: number
+      previewImageURL: string
+    }
   }
 }
 interface Response {
   data: {
     currentUser: {
       followedLiveUsers: {
-        nodes: Room[]
+        edges: Room[]
       }
       id: string
     } | null
@@ -26,12 +40,14 @@ interface Response {
 }
 
 function getInfoFromItem ({
-  displayName,
-  login,
-  stream: {
-    title,
-    viewersCount,
-    previewImageURL
+  node:{
+    displayName,
+    login,
+    stream: {
+      title,
+      viewersCount,
+      previewImageURL,
+    }
   }
 }: Room): Living | undefined {
   return {
@@ -63,7 +79,7 @@ registerWebSite({
       throw new PollError(PollErrorType.NotLogin)
     }
 
-    return mapFilter(res.data.currentUser.followedLiveUsers.nodes, getInfoFromItem)
+    return mapFilter(res.data.currentUser.followedLiveUsers.edges, getInfoFromItem)
   },
   id: 'twitch',
   homepage: 'https://www.twitch.tv/'
