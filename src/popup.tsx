@@ -20,10 +20,12 @@ const Item: React.FC<{ room: Living }> = ({ room: {
 } }) => {
   const now = useNow()
   const onClick = useCallback(() => {
-    chrome.windows.create({
-      url,
+    chrome.windows.getCurrent((w) => {
+      chrome.tabs.create({
+        url,
+        windowId: w.id
+      })
     })
-    // window.open(url)
   }, [url])
   const hasOnline = maybeHas(online)
   let timeView = <Localized id='time-started' />
@@ -72,9 +74,11 @@ const Site: React.FC<{
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleClick = useCallback(() => {
-    chrome.windows.create({
-      url: item.info.homepage,
-      type: 'normal',
+    chrome.windows.getCurrent((w) => {
+      chrome.tabs.create({
+        url: item.info.homepage,
+        windowId:w.id
+      });
     });
   }, [item]);
 

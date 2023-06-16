@@ -20,11 +20,13 @@ chrome.runtime.onConnect.addListener(async (port) => {
 })
 
 chrome.notifications.onClicked.addListener((id) => {
-  chrome.windows.create({
-    url: id,
-  })
-  // window.open(id)
-})
+  chrome.windows.getCurrent((w) => {
+    chrome.tabs.create({
+      url: id,
+      windowId: w.id,
+    });
+  });
+});
 
 chrome.alarms.create({
   delayInMinutes: 1,
