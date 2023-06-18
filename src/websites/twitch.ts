@@ -20,6 +20,7 @@ interface Room {
   node:{
     displayName: string
     login: string
+    profileImageURL: string
     stream: {
       title: string
       viewersCount: number
@@ -43,6 +44,7 @@ function getInfoFromItem ({
   node:{
     displayName,
     login,
+    profileImageURL,
     stream: {
       title,
       viewersCount,
@@ -55,6 +57,7 @@ function getInfoFromItem ({
     startAt: null,
     author: displayName,
     online: viewersCount,
+    avatarUrl: profileImageURL,
     preview: previewImageURL,
     url: `https://www.twitch.tv/${login}`
   }

@@ -24,6 +24,8 @@ export interface Living {
   startAt: Maybe<number>
   // author
   author: string
+  //author avatar
+  avatarUrl: string
   // online viewer
   online: Maybe<number>
   // the room url

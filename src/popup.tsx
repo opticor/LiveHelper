@@ -15,6 +15,7 @@ const Item: React.FC<{ room: Living }> = ({ room: {
   title,
   author,
   startAt,
+  avatarUrl,
   online,
   url,
 } }) => {
@@ -46,8 +47,12 @@ const Item: React.FC<{ room: Living }> = ({ room: {
     <div className='right'>
       <p className='title'>{title}</p>
       <div className='detail'>
+        {/* <span className='author'>{author}</span> */}
+        <span className={avatarUrl === undefined ? 'author':'avatar'}>
+          {avatarUrl === undefined? null: <img src={avatarUrl}/>}
+          {author}
+        </span> 
         <span className='time'>{timeView}</span>
-        <span className='author'>{author}</span>
         <span className='online'><Localized
           id={hasOnline ? 'online' : 'online-placeholder'}
           $online={online}

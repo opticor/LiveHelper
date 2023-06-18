@@ -50,6 +50,7 @@ function getInfoFromItem (item: Item): Living | undefined {
       author: item.nickname,
       online: parseViews(item.online),
       preview: item.room_src,
+      avatarUrl: item.avatar_small,
       url: 'https://www.douyu.com/' + item.room_id
   }
 }

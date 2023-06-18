@@ -7,6 +7,7 @@ interface Room {
   nickname: string;
   online: number;
   keyframe: string;
+  face: string;
   link: string;
 }
 interface Response {
@@ -23,6 +24,7 @@ function getInfoFromItem({
   liveTime,
   nickname,
   online,
+  face,
   keyframe,
   link,
 }: Room): Living | undefined {
@@ -30,6 +32,7 @@ function getInfoFromItem({
     title,
     startAt: liveTime,
     author: nickname,
+    avatarUrl: face,
     online,
     preview: keyframe,
     url: link,

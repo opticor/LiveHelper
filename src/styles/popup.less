@@ -115,17 +115,30 @@ body {
 
     span {
       flex: auto;
-      display: inline-block;
+      display: flex;
+      align-items: center;
       color: #a0a0a0;
       width: 100px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      font-size: 12px
+      font-size: 12px;
+      margin: 0 10px 0 0;
     }
     .time {
       padding: 0 0 0 16px;
       background: left / 12px url(../img/clock.svg) no-repeat;
+    }
+    .avatar {
+      width: 140px;
+
+      img {
+      width: 25px;
+      font-size: 13px;
+      padding: 0 3px 0 0;
+      border-radius: 50%;
+      }
+      
     }
     .author {
       padding: 0 0 0 16px;

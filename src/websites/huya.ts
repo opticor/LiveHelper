@@ -9,6 +9,7 @@ interface Room {
   nick: string
   totalCount: number
   screenshot: string
+  avatar180: string
 }
 interface Response {
   result: {
@@ -25,6 +26,7 @@ function getInfoFromItem ({
   intro,
   startTime,
   nick,
+  avatar180,
   totalCount,
   screenshot
 }: Room): Living | undefined {
@@ -33,6 +35,7 @@ function getInfoFromItem ({
     startAt: startTime,
     author: nick,
     online: totalCount,
+    avatarUrl: avatar180,
     preview: screenshot,
     url: 'https://www.huya.com/' + profileRoom
   }

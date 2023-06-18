@@ -28,6 +28,7 @@ async function main(){
   await bundler.bundle()
   bundler.stop()
   await zip('manifest.json', 'versions/mlh-'+package.version+'.zip')
+  moveFile(zipFileName, 'versions/' + package.version)
   console.log('done')
 }
 main().catch(e => console.error(e))
@@ -46,4 +47,13 @@ function zip(manifest, filename) {
     .pipe(output)
 
   return archive.finalize()
+}
+
+function moveFile(sourcePath, destinationDir) {
+  const fileName = sourcePath.split('/').pop()
+  const destinationPath = destinationDir + '/' + fileName
+
+  fs.mkdirSync(destinationDir, { recursive: true })
+  fs.renameSync(sourcePath, destinationPath)
+  console.log('File moved to:', destinationPath)
 }
